@@ -3,6 +3,10 @@ import { Component } from '@angular/core';
 import { LoadingController } from '@ionic/angular';
 import { HttpClient } from '@angular/common/http';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
+// import { Storage } from '@ionic/storage';
+import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
+// import { variable } from '@angular/compiler/src/output/output_ast';
+
 
 @Component({
 	selector: 'app-tab2',
@@ -40,6 +44,8 @@ export class Tab2Page
 	// you may have to write logic to parse the recognized text ( break it into an array as it will have multiple lines seperated by a "\n")
 	image_text: string;
 
+	medicines: string[];
+
 	constructor(private loadingCtrl: LoadingController, 
 		private httpClient: HttpClient, private camera: Camera) {
 	}
@@ -68,23 +74,29 @@ export class Tab2Page
 			console.log("Google request object: " + JSON.stringify(this.google_vision_request));
 
 			// make an HTTP Post request to Google vision api URL and pass the request variable 'google_vision_request' as a JSON string.
-			this.httpClient.post(this.google_vision_api_url, JSON.stringify(this.google_vision_request)).subscribe( responses =>
-			{
-				console.log("google response:  " + responses);
-				// google sends the response back as a JSON. you need to stringify it and parse it back to convert it into an object
-				var response_string = JSON.stringify(responses);
-				console.log("google response string :  " + response_string);
-				var responseObj = JSON.parse(response_string);
+			this.httpClient.post(this.google_vision_api_url, JSON.stringify(this.google_vision_request)).subscribe( 
+				responses =>
+				{
+					console.log("google response:  " + responses);
+					// google sends the response back as a JSON. you need to stringify it and parse it back to convert it into an object
+					var response_string = JSON.stringify(responses);
+					console.log("google response string :  " + response_string);
+					var responseObj = JSON.parse(response_string);
 
-				// responseObj variable contains all the results.
-				console.log(responseObj.responses[0].fullTextAnnotation.text);
+					// responseObj variable contains all the results.
+					console.log(responseObj.responses[0].fullTextAnnotation.text);
 
-				// get the result from responseObj and set it to the variable image_text (this is being used in html to display )
-				this.image_text = responseObj.responses[0].fullTextAnnotation.text;
+					// get the result from responseObj and set it to the variable image_text (this is being used in html to display )
+					this.image_text = responseObj.responses[0].fullTextAnnotation.text;
 
-				// dismiss the spinner since the image is loaded and we have the result from google vision
-				uploadingSpinner.dismiss();
-			});
+					// dismiss the spinner since the image is loaded and we have the result from google vision
+					uploadingSpinner.dismiss();
+				}, 
+				error => 
+				{
+					console.log("Error from http request " + error.error);
+				}
+			);
 		}
 		catch(error)
 		{
@@ -159,5 +171,11 @@ export class Tab2Page
 
 		await this.camera.cleanup();
 		return image;    
+	}
+
+	scheduleNotification(medicine)
+	{
+		this.medicines = this.image_text.split(" ");
+		alert("User clicked on " + medicine);
 	}
 }
