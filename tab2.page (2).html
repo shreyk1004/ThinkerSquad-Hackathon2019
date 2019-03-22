@@ -1,0 +1,25 @@
+<ion-header>
+	<ion-toolbar>
+		<ion-title align="center">
+			Tab Two
+		</ion-title>
+	</ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+	<ion-button (click)="uploadFromCamera()">
+			Camera
+			<ion-icon slot="end" name="camera"></ion-icon>
+	</ion-button>
+
+	<ion-button (click)="uploadFromGallery()">
+		Gallery
+		<ion-icon slot="end" name="camera"></ion-icon>
+	</ion-button>	
+
+	<br>
+	<img *ngIf="camera_image" src="{{camera_image}}"/>
+	<br>
+	<h1>The Text from Image Is</h1>
+	<p>{{image_text}}</p>
+</ion-content>
