@@ -3,9 +3,11 @@ import { Component } from '@angular/core';
 import { LoadingController } from '@ionic/angular';
 import { HttpClient } from '@angular/common/http';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
+// import { Storage } from '@ionic/storage';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
-import { Key } from 'protractor';
-import { key } from 'localforage';
+// import { variable } from '@angular/compiler/src/output/output_ast';
+import { AlertController } from "@ionic/angular"
+
 
 @Component({
 	selector: 'app-tab2',
@@ -24,8 +26,7 @@ export class Tab2Page
 	private galleryOptions: CameraOptions = {
 		sourceType: this.camera.PictureSourceType.SAVEDPHOTOALBUM,
 		destinationType: this.camera.DestinationType.DATA_URL
-
-	}
+	};
 
 	// this is the request object in JSON format for google vision api
 	// google vision api requires you to make a "POST" request and send the image and what you want to do in JSON format
@@ -42,19 +43,14 @@ export class Tab2Page
 	// this variable can be used in the html file using the syntax {{image_text}}
 	// you may have to write logic to parse the recognized text ( break it into an array as it will have multiple lines seperated by a "\n")
 	image_text: string;
-	localNotifications: any;
+
+	medicines: ["paracetamol-10:00", "crocin-20:00", "sinarest-13:00"];
+	medicine_time: string[][];
 
 	constructor(private loadingCtrl: LoadingController, 
-		private httpClient: HttpClient, private camera: Camera, localNotifications: LocalNotifications) 
-		{
-			this.localNotifications.schedule({
-				id: 1,
-				text: 'Single ILocalNotification',
-				sound: isAndroid? 'file://sound.mp3': 'file://beep.caf',
-				data: {myData:'Helloo'}
-			  });
-			  
-		}
+		private httpClient: HttpClient, private camera: Camera,
+		private localNotifications: LocalNotifications, private alertController: AlertController) {
+	}
 
 	async uploadFromCamera()
 	{
@@ -157,7 +153,7 @@ export class Tab2Page
 		  console.log(error);
 		  uploadingSpinner.dismiss();
 		}
-	} 
+	}
 
 	async takeCameraPicture()
 	{
@@ -177,5 +173,29 @@ export class Tab2Page
 
 		await this.camera.cleanup();
 		return image;    
+	}
+
+	async scheduleNotification(medicine)
+	{
+		// this.medicines = this.image_text.split(" ");
+		console.log(this.medicines);
+		// alert("User clicked on " + medicine);
+
+		for(var i = 0; i < this.medicines.length; i++)
+		{
+			this.medicine_time[i] = this.medicines[i].split("-");
+		}
+
+	// 	const alert = await this.alertController.create({
+	// 		header: 'Prompt!',
+	// 		inputs: [
+	// 			{
+	// 				name: 'Set Notification Time',
+	// 				type: 'time',
+	// 				min: '00:00',
+	// 				max: '23:59'
+	// 			}
+	// 		]
+	// 	})
 	}
 }
